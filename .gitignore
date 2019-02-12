@@ -1,0 +1,58 @@
+# Ignore symbolic links sps and cmake
+
+# Common directory names used for output
+/debug
+/release
+/build
+
+# Output placed in-source
+/f2/PyField2.py
+
+/matlab/fnmM.m
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+*.pyd
+*.mexa64
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Compiled Python files
+*.pyc
+
+# Numpy zip files
+*.npz
+
+# OS generated files
+*~
+GPATH
+GRTAGS
+GTAGS
