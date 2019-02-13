@@ -1,3 +1,4 @@
+#include <ocl/utils.h>
 #include <gtest/gtest.h>
 
 void fillRandRange(const uint32_t len,
