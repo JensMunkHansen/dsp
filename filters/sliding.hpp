@@ -2,4 +2,4 @@
 
 #include <filters/sliding_types.h>
 
-void slidingFilter(Image2D* pImage);
+void slidingFilter(Image2D* pImage, SlidingFilterBank* pBank);

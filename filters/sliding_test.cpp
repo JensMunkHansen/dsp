@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+void fillRandRange(const uint32_t len,
+                   const float lb,
+                   const float ub, float* pArr);
 
 
 
