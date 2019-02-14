@@ -7,11 +7,15 @@ endif()
 find_package( GTest REQUIRED )
 find_package( Threads)
 
-include_directories(${GTEST_INCLUDE_DIRS})
+find_package( OpenCL )
 
+include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${OpenCL_INCLUDE_DIRS})
 add_executable(sliding_test sliding_test.cpp)
 
 target_link_libraries(sliding_test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+target_link_libraries(sliding_test ${OpenCL_LIBRARY})
 enable_testing()
 
 add_test(NAME    sliding_test

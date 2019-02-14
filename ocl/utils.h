@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define __STDC_FORMAT_MACROS 1 // Necessary for __cplusplus and -std=c++0x
+#ifdef __cplusplus
+# define __STDC_FORMAT_MACROS 1
+#endif
+
 #include <inttypes.h>
 
 #include "CL/cl.h"
@@ -53,12 +56,16 @@ typedef struct cl_buffers {
 } cl_buffers_t;
 #endif
 
+#ifndef NUMARGS
+# define NUMARGS(...)                                            \
+   SELECT_5TH(__VA_ARGS__, 4, 3, 2, 1, 0, throwaway, throwaway)
+# define SELECT_5TH(a1,a2,a3,a4,a5, ...) a5
+#endif
+
 /* Clean-up handler: Calls argument with prototype void (*)() if present */
 #ifdef __GNUC__
-# define NUMARGS(...)  (sizeof(( void (*[])() ){0, ##__VA_ARGS__})/sizeof(void (*)())-1)
 # define CLEANUP(...)  cleanup(NUMARGS(__VA_ARGS__), ##__VA_ARGS__)
 #else
-# define NUMARGS(...)  (sizeof(( void (*[])() ){__VA_ARGS__})/sizeof(void (*)()))
 # define CLEANUP(...)  (cleanup(NUMARGS(__VA_ARGS__), __VA_ARGS__))
 #endif
 
@@ -71,8 +78,12 @@ void cleanup(int numargs, ...) {
   va_list ap;
   va_start(ap, numargs);
 
-  if (numargs--)
-    pCleanup = va_arg(ap, void (*)());
+  typedef void(*fun)();
+
+  if (numargs--) {
+    // Microsoft gives syntax error if (ap, void(*)())
+    pCleanup = va_arg(ap, fun);
+  }
   va_end(ap);
 
   pCleanup();
@@ -166,9 +177,9 @@ strclerror(cl_int status) {
 }
 
 #define CallClErr(fun, arg) {                                     \
-  intptr_t clerr64 = (intptr_t)(fun arg);			                    \
+  intptr_t clerr64 = (intptr_t)(fun arg);                         \
   cl_int clerr     = (cl_int) clerr64;                            \
-  if ((clerr == 0) && (clerrno != CL_SUCCESS)) {		              \
+  if ((clerr == 0) && (clerrno != CL_SUCCESS)) {                  \
     FailClErr(#fun, clerrno)                                      \
   }                                                               \
   else if ((clerr != CL_SUCCESS) && (clerrno != CL_SUCCESS))      \
@@ -177,7 +188,7 @@ strclerror(cl_int status) {
 }
 
 #define CallClErrExit(fun, arg, ret, ...) {                       \
-  intptr_t clerr64 = (intptr_t)(fun arg);			                    \
+  intptr_t clerr64 = (intptr_t)(fun arg);                         \
   cl_int clerr     = (cl_int) clerr64;                            \
   if ((clerr == 0) && (clerrno != CL_SUCCESS)) {                  \
     FailClErr(#fun, clerrno)                                      \
@@ -192,8 +203,8 @@ strclerror(cl_int status) {
   clerrno = CL_SUCCESS;                                           \
 }
 
-#define FailClErr(msg,clerrno) {                                  \
+#define FailClErr(msg,clerrno) {                                        \
   (void)fprintf(stderr, "FAILED: %s %d %s(clerrno=%d strclerror=%s)\n", \
-                __FILE__, __LINE__, msg, clerrno, strclerror(clerrno));	\
-  (void)fflush(stderr);                                           \
+                __FILE__, __LINE__, msg, clerrno, strclerror(clerrno)); \
+  (void)fflush(stderr);                                                 \
 }
