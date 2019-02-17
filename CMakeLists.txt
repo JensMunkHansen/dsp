@@ -5,4 +5,6 @@ include_directories(
   "${PROJECT_BINARY_DIR}"   # to find fnm/config.h
   )
 
+add_subdirectory(ocl)
+
 add_subdirectory(filters)
