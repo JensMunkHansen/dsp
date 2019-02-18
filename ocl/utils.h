@@ -24,7 +24,7 @@
     FailErr(#fun)                                             \
 }
 
-#define CallErrExit(fun, arg, ret, ...)  {                    \
+#define CallErrReturn(fun, arg, ret, ...)  {                    \
   if ((fun arg)<0) {                                          \
     FailErr(#fun);                                            \
     CLEANUP(__VA_ARGS__);                                     \
@@ -95,8 +95,8 @@ void cleanup(int numargs, ...) {
    Calling macros for OpenCL functions using clerrno:
 
      CallClErr(function, (arguments))
-     CallClErrExit(function, (arguments), return value)
-     CallClErrExit(function, (arguments), return value, void (clean*)())
+     CallClErrReturn(function, (arguments), return value)
+     CallClErrReturn(function, (arguments), return value, void (clean*)())
 
 */
 
@@ -187,7 +187,7 @@ strclerror(cl_int status) {
   clerrno = CL_SUCCESS;                                           \
 }
 
-#define CallClErrExit(fun, arg, ret, ...) {                       \
+#define CallClErrReturn(fun, arg, ret, ...) {                       \
   intptr_t clerr64 = (intptr_t)(fun arg);                         \
   cl_int clerr     = (cl_int) clerr64;                            \
   if ((clerr == 0) && (clerrno != CL_SUCCESS)) {                  \
@@ -203,8 +203,20 @@ strclerror(cl_int status) {
   clerrno = CL_SUCCESS;                                           \
 }
 
-#define FailClErr(msg,clerrno) {                                        \
+#define FailClErr(msg, clerrno) {                                        \
   (void)fprintf(stderr, "FAILED: %s %d %s(clerrno=%d strclerror=%s)\n", \
                 __FILE__, __LINE__, msg, clerrno, strclerror(clerrno)); \
   (void)fflush(stderr);                                                 \
 }
+
+#define ClErrExit(clerr) {    \
+  if (clerr != CL_SUCCESS)) { \
+    FailClErr("", ret);       \
+    exit(ret);                \
+  }                           \
+}
+
+static char* slurp_file(const char *filename);
+
+static cl_program opencl_build_program(cl_context ctx, cl_device_id device,
+                                       const char *file, const char *options_fmt, ...);
