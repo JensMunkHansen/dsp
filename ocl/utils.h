@@ -210,9 +210,9 @@ strclerror(cl_int status) {
 }
 
 #define ClErrExit(clerr) {    \
-  if (clerr != CL_SUCCESS)) { \
-    FailClErr("", ret);       \
-    exit(ret);                \
+  if (clerr != CL_SUCCESS) { \
+    FailClErr("", clerr);       \
+    exit((int)clerr);                \
   }                           \
 }
 
