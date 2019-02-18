@@ -23,7 +23,7 @@ static struct { oclPlatformVendor vendor; const char *strName; } oclPlatformVend
 
 int fun() {
   cl_uint numPlatforms;
-  CallClErrExit(clGetPlatformIDs,
+  CallClErrReturn(clGetPlatformIDs,
                 (0,
                  NULL,
                  &numPlatforms), EXIT_FAILURE, pCleanup);
@@ -33,7 +33,7 @@ int fun() {
 
   allPlatforms = (cl_platform_id*) malloc(numPlatforms * sizeof(cl_platform_id));
 
-  CallClErrExit(clGetPlatformIDs,
+  CallClErrReturn(clGetPlatformIDs,
                 (numPlatforms,
                  allPlatforms,
                  NULL),
@@ -47,7 +47,7 @@ int fun() {
   // Find NVIDIA platform
   for (cl_uint i = 0; i < numPlatforms; i++) {
     char pbuff[128];
-    CallClErrExit(clGetPlatformInfo,
+    CallClErrReturn(clGetPlatformInfo,
                   (allPlatforms[i],
                    CL_PLATFORM_VENDOR,
                    sizeof(pbuff),
@@ -74,7 +74,7 @@ int fun() {
   cl_context context;
 
   // Select GPU device
-  CallClErrExit(context = clCreateContextFromType,
+  CallClErrReturn(context = clCreateContextFromType,
                 (cprops,
                  CL_DEVICE_TYPE_GPU,
                  NULL,
@@ -83,7 +83,7 @@ int fun() {
                 EXIT_FAILURE, pCleanup);
 
   size_t deviceListSize;
-  CallClErrExit(clGetContextInfo,
+  CallClErrReturn(clGetContextInfo,
                 (context,
                  CL_CONTEXT_DEVICES,
                  0,
@@ -109,7 +109,7 @@ int fun() {
   }
 
   /* Next, get the device list data */
-  CallClErrExit(clGetContextInfo,
+  CallClErrReturn(clGetContextInfo,
                 (context,
                  CL_CONTEXT_DEVICES,
                  deviceListSize,
